@@ -26,7 +26,16 @@ if (existing) api.defaults.headers.common.Authorization = `Bearer ${existing}`;
 
 // Normalize errors to a friendly message
 api.interceptors.response.use(
-  (res) => res,
+  (res) => {
+    // Guard: if the API base isn't wired up, a same-origin SPA host can return
+    // index.html (200) for /api/* — treat any HTML payload as a failed call so
+    // callers' .catch runs instead of crashing on undefined JSON.
+    const ct = res.headers?.['content-type'] || '';
+    if (typeof res.data === 'string' && (ct.includes('text/html') || res.data.trimStart().startsWith('<'))) {
+      return Promise.reject({ message: 'API is not reachable', status: 0 });
+    }
+    return res;
+  },
   (error) => {
     const message =
       error.response?.data?.message || error.message || 'Something went wrong. Please try again.';

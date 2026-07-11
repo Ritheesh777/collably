@@ -22,8 +22,8 @@ export default function Landing() {
   const [stats, setStats] = useState({ companies: 0, creators: 0, campaigns: 0 });
 
   useEffect(() => {
-    campaignApi.featured().then((d) => setFeatured(d.items)).catch(() => {});
-    publicApi.stats().then((d) => setStats(d.stats)).catch(() => {});
+    campaignApi.featured().then((d) => setFeatured(d?.items ?? [])).catch(() => {});
+    publicApi.stats().then((d) => setStats(d?.stats ?? { companies: 0, creators: 0, campaigns: 0 })).catch(() => {});
   }, []);
 
   return (
