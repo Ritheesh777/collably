@@ -4,80 +4,73 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Signature violet
+        // Signature colour: a confident coral / vermilion (editorial, warm, human)
         brand: {
-          50: '#f5f3ff',
-          100: '#ede9fe',
-          200: '#ddd6fe',
-          300: '#c4b5fd',
-          400: '#a78bfa',
-          500: '#8b5cf6',
-          600: '#7c3aed',
-          700: '#6d28d9',
-          800: '#5b21b6',
-          900: '#4c1d95',
-          950: '#2e1065',
+          50: '#fcf2ee',
+          100: '#f9e0d6',
+          200: '#f3c2ae',
+          300: '#ec9d7f',
+          400: '#e37450',
+          500: '#d9542f',
+          600: '#c4441f',
+          700: '#a3361a',
+          800: '#832d1a',
+          900: '#6b2718',
+          950: '#3a1109',
         },
-        // Fuchsia accent (gradient partner + energy)
+        // Secondary accent: a deep pine green, used sparingly (success, verified)
         accent: {
-          400: '#e879f9',
-          500: '#d946ef',
-          600: '#c026d3',
-          700: '#a21caf',
+          50: '#ecf5f0',
+          400: '#3f9e7f',
+          500: '#1e8060',
+          600: '#146b50',
+          700: '#0f5641',
         },
-        // Warm-neutral ink scale for text/surfaces.
-        // Mid tones (400–600) are deliberately dark so body/muted text stays
-        // high-contrast and readable on translucent glass surfaces.
+        // Warm near-black ink scale — the backbone of an editorial look
         ink: {
-          50: '#f7f7f9',
-          100: '#eeeef2',
-          200: '#dcdce4',
-          300: '#b9bac8',
-          400: '#7c7e92',
-          500: '#565971',
-          600: '#3e4052',
-          700: '#33343f',
-          800: '#26272f',
-          900: '#181920',
-          950: '#0b0b14',
+          50: '#f6f3ec',
+          100: '#ece6da',
+          200: '#ddd5c4',
+          300: '#c0b6a1',
+          400: '#8b8069',
+          500: '#6b6152',
+          600: '#4d453a',
+          700: '#37312a',
+          800: '#26221c',
+          900: '#1a1713',
+          950: '#0f0d0a',
         },
+        // Surfaces
+        paper: '#f4f0e7', // warm cream page background
+        surface: '#fffdf8', // warm white for cards
       },
       fontFamily: {
         sans: ['Satoshi', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        display: ['"Clash Display"', 'Satoshi', 'sans-serif'],
+        display: ['Fraunces', 'Georgia', 'serif'],
       },
       boxShadow: {
-        soft: '0 1px 2px rgba(16,16,28,0.04), 0 4px 16px -8px rgba(16,16,28,0.10)',
-        card: '0 1px 3px rgba(16,16,28,0.05), 0 12px 32px -16px rgba(16,16,28,0.18)',
-        lift: '0 8px 40px -12px rgba(124,58,237,0.28)',
-        glow: '0 0 0 1px rgba(124,58,237,0.10), 0 8px 30px -8px rgba(124,58,237,0.35)',
-        glass: '0 4px 30px rgba(16,16,28,0.08), inset 0 1px 0 rgba(255,255,255,0.55)',
-        'glass-lg': '0 20px 60px -20px rgba(76,29,149,0.30), inset 0 1px 0 rgba(255,255,255,0.6)',
+        soft: '0 1px 2px rgba(26,23,19,0.05), 0 1px 3px rgba(26,23,19,0.06)',
+        card: '0 1px 0 rgba(26,23,19,0.04), 0 14px 30px -18px rgba(26,23,19,0.22)',
+        lift: '0 20px 44px -22px rgba(26,23,19,0.34)',
+        press: 'inset 0 2px 0 rgba(26,23,19,0.12)',
       },
       backgroundImage: {
-        'brand-gradient': 'linear-gradient(135deg, #7c3aed 0%, #c026d3 100%)',
-        'brand-gradient-soft': 'linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%)',
-        mesh:
-          'radial-gradient(60% 60% at 20% 20%, rgba(124,58,237,0.35) 0%, transparent 60%), radial-gradient(50% 50% at 80% 30%, rgba(217,70,239,0.30) 0%, transparent 55%), radial-gradient(60% 60% at 60% 90%, rgba(139,92,246,0.25) 0%, transparent 60%)',
+        // Flat coral (kept as a token so existing bg-brand-gradient usages become
+        // a solid, editorial colour — no rainbow gradients anywhere).
+        'brand-gradient': 'linear-gradient(0deg, #d9542f, #d9542f)',
+        'brand-gradient-soft': 'linear-gradient(0deg, #e37450, #e37450)',
+        mesh: 'none',
+        grain:
+          "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")",
       },
       keyframes: {
         'fade-up': {
           '0%': { opacity: '0', transform: 'translateY(12px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
-        float: {
-          '0%,100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-10px)' },
-        },
-        'pulse-ring': {
-          '0%': { transform: 'scale(0.8)', opacity: '0.6' },
-          '100%': { transform: 'scale(2.2)', opacity: '0' },
-        },
       },
       animation: {
         'fade-up': 'fade-up 0.5s cubic-bezier(0.22,1,0.36,1) both',
-        float: 'float 6s ease-in-out infinite',
-        'pulse-ring': 'pulse-ring 2.4s ease-out infinite',
       },
     },
   },

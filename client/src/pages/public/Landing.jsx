@@ -29,28 +29,13 @@ export default function Landing() {
   return (
     <div className="overflow-clip">
       {/* ── Hero ───────────────────────────────────────── */}
-      <section className="relative">
-        {/* animated mesh backdrop (transform/opacity only → cheap) */}
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-mesh opacity-70" />
-        <motion.div
-          aria-hidden
-          className="pointer-events-none absolute -left-32 top-10 -z-10 h-72 w-72 rounded-full bg-brand-400/30 blur-3xl"
-          animate={{ y: [0, 24, 0] }}
-          transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <motion.div
-          aria-hidden
-          className="pointer-events-none absolute right-0 top-32 -z-10 h-80 w-80 rounded-full bg-accent-400/25 blur-3xl"
-          animate={{ y: [0, -28, 0] }}
-          transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }}
-        />
-
-        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-20 pt-16 sm:pt-20 lg:grid-cols-[1.05fr_0.95fr]">
+      <section className="relative border-b border-ink-200">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-20 pt-14 sm:pt-16 lg:grid-cols-[1.05fr_0.95fr]">
           {/* Left: copy */}
           <div className="text-center lg:text-left">
             <FadeIn>
-              <span className="badge border border-brand-200 bg-white/70 px-3 py-1 text-brand-700 backdrop-blur">
-                <IconSparkles className="h-3.5 w-3.5" /> No agency fees · No middlemen
+              <span className="badge border border-ink-200 bg-surface px-3 py-1 text-ink-700">
+                <span className="h-1.5 w-1.5 rounded-full bg-brand-500" /> No agency fees · No middlemen
               </span>
             </FadeIn>
             <FadeIn delay={0.06}>
@@ -98,7 +83,7 @@ export default function Landing() {
               src={HERO_IMAGES.a}
               alt="Creator"
               loading="eager"
-              className="absolute left-2 top-4 h-56 w-44 rounded-3xl object-cover shadow-glass-lg ring-4 ring-white/60"
+              className="absolute left-2 top-4 h-56 w-44 rounded-3xl object-cover shadow-lift ring-4 ring-white/60"
               animate={{ y: [0, -14, 0] }}
               transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
             />
@@ -106,7 +91,7 @@ export default function Landing() {
               src={HERO_IMAGES.b}
               alt="Creator"
               loading="eager"
-              className="absolute right-4 top-0 h-44 w-36 rounded-3xl object-cover shadow-glass-lg ring-4 ring-white/60"
+              className="absolute right-4 top-0 h-44 w-36 rounded-3xl object-cover shadow-lift ring-4 ring-white/60"
               animate={{ y: [0, 16, 0] }}
               transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
             />
@@ -114,13 +99,13 @@ export default function Landing() {
               src={HERO_IMAGES.c}
               alt="Creator"
               loading="eager"
-              className="absolute bottom-2 right-10 h-52 w-64 rounded-3xl object-cover shadow-glass-lg ring-4 ring-white/60"
+              className="absolute bottom-2 right-10 h-52 w-64 rounded-3xl object-cover shadow-lift ring-4 ring-white/60"
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
             />
             {/* floating glass stat chip */}
             <motion.div
-              className="glass-strong absolute bottom-8 left-0 rounded-2xl px-4 py-3 shadow-glass-lg"
+              className="glass-strong absolute bottom-8 left-0 rounded-2xl px-4 py-3 shadow-lift"
               animate={{ y: [0, 12, 0] }}
               transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
             >
@@ -146,7 +131,7 @@ export default function Landing() {
         </Reveal>
         <Stagger className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((s, i) => (
-            <StaggerItem key={s.title} className="card fx-tilt group relative p-6">
+            <StaggerItem key={s.title} className="card card-hover group relative p-6">
               <div className="grid h-12 w-12 place-items-center rounded-2xl bg-brand-gradient text-white shadow-lift transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-105">
                 <s.icon className="h-5 w-5" strokeWidth={2} />
               </div>
@@ -195,7 +180,7 @@ export default function Landing() {
             [IconStar, 'Reputation that follows you', 'Mutual reviews build trust for both sides over time.'],
             [IconTrending, 'Built to scale', 'Structured search replaces endless DMs and cold outreach.'],
           ].map(([Icon, t, d]) => (
-            <StaggerItem key={t} className="card fx-topline group p-6">
+            <StaggerItem key={t} className="card card-hover group p-6">
               <Icon className="h-6 w-6 text-brand-600 transition-transform duration-300 group-hover:scale-110" strokeWidth={2} />
               <h3 className="mt-3 font-semibold text-ink-900">{t}</h3>
               <p className="mt-1 text-sm text-ink-500">{d}</p>
@@ -252,7 +237,7 @@ function PathCard({ tone, Icon, title, points, cta }) {
   const header =
     tone === 'brand' ? 'bg-brand-gradient' : 'bg-ink-950';
   return (
-    <div className="card card-hover fx-sheen group h-full overflow-hidden">
+    <div className="card card-hover card-hover group h-full overflow-hidden">
       <div className={`relative ${header} overflow-hidden p-6 text-white`}>
         <div className="pointer-events-none absolute inset-0 bg-mesh opacity-30" />
         <Icon className="relative h-8 w-8" strokeWidth={1.75} />

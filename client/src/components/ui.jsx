@@ -104,16 +104,16 @@ export function Modal({ open, onClose, title, children, footer, wide }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.98 }}
             transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-            className={`glass-strong w-full ${wide ? 'sm:max-w-2xl' : 'sm:max-w-lg'} max-h-[92vh] overflow-y-auto rounded-t-3xl shadow-glass-lg sm:rounded-2xl`}
+            className={`glass-strong w-full ${wide ? 'sm:max-w-2xl' : 'sm:max-w-lg'} max-h-[92vh] overflow-y-auto rounded-t-3xl shadow-lift sm:rounded-2xl`}
           >
-            <div className="flex items-center justify-between border-b border-white/40 px-5 py-4">
+            <div className="flex items-center justify-between border-b border-ink-200 px-5 py-4">
               <h3 className="text-lg font-semibold text-ink-900">{title}</h3>
               <button onClick={onClose} className="rounded-lg p-1 text-ink-400 hover:bg-ink-100 hover:text-ink-600" aria-label="Close">
                 <IconX className="h-5 w-5" />
               </button>
             </div>
             <div className="px-5 py-4">{children}</div>
-            {footer && <div className="flex justify-end gap-2 border-t border-white/40 px-5 py-4">{footer}</div>}
+            {footer && <div className="flex justify-end gap-2 border-t border-ink-200 px-5 py-4">{footer}</div>}
           </motion.div>
         </motion.div>
       )}
@@ -176,7 +176,7 @@ export function StatCard({ label, value, icon: Icon, accent = 'brand', delay = 0
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay, ease: [0.22, 1, 0.36, 1] }}
-      className="card fx-spotlight group flex items-center gap-4 p-4"
+      className="card card-hover group flex items-center gap-4 p-4"
     >
       <div className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6 ${colors[accent]}`}>
         {Icon && <Icon className="h-5 w-5" strokeWidth={2} />}

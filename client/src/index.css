@@ -8,36 +8,27 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply text-ink-800 antialiased;
+    @apply text-ink-900 antialiased;
     font-family: 'Satoshi', 'Inter', ui-sans-serif, system-ui, sans-serif;
-    background-color: #f6f5fb;
-    /* Ambient aurora backdrop — fixed & cheap, gives glass something to refract */
-    background-image:
-      radial-gradient(45% 40% at 8% 0%, rgba(124, 58, 237, 0.14) 0%, transparent 60%),
-      radial-gradient(40% 40% at 100% 10%, rgba(217, 70, 239, 0.12) 0%, transparent 60%),
-      radial-gradient(50% 50% at 50% 100%, rgba(139, 92, 246, 0.10) 0%, transparent 65%);
-    background-attachment: fixed;
+    background-color: #f4f0e7; /* warm cream paper */
   }
-  /* Headings set type only — NOT color. Color is inherited from context so a
-     heading on a dark panel stays light and one on a light panel stays dark.
-     (Forcing a color here is what made dark-on-dark text disappear.) */
+  /* Editorial serif display — inherits colour so it works on dark & light */
   h1, h2, h3, h4 {
-    font-family: 'Clash Display', 'Satoshi', sans-serif;
-    @apply tracking-tight;
-    font-weight: 600;
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    letter-spacing: -0.01em;
     color: inherit;
   }
   ::selection {
-    @apply bg-brand-600/20 text-brand-800;
+    @apply bg-brand-500/25 text-ink-900;
   }
-  ::-webkit-scrollbar { width: 10px; height: 10px; }
-  ::-webkit-scrollbar-thumb { @apply rounded-full bg-ink-300/60; }
-  ::-webkit-scrollbar-thumb:hover { @apply bg-ink-400/70; }
+  ::-webkit-scrollbar { width: 11px; height: 11px; }
+  ::-webkit-scrollbar-thumb { @apply rounded-full bg-ink-300; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-ink-400; }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.001ms !important;
-      animation-iteration-count: 1 !important;
       transition-duration: 0.001ms !important;
       scroll-behavior: auto !important;
     }
@@ -45,111 +36,71 @@
 }
 
 @layer components {
-  /* ── Buttons ─────────────────────────────────────── */
-  /* Base: a light streak sweeps across on hover, springy press. */
+  /* ── Buttons — solid, editorial, springy ─────────── */
   .btn {
-    @apply relative inline-flex select-none items-center justify-center gap-2 overflow-hidden rounded-xl px-4 py-2.5 text-sm font-semibold
-           transition-[transform,box-shadow,background-color,border-color,color] duration-200 ease-out
-           focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400/60 focus-visible:ring-offset-1
-           active:scale-[0.96] disabled:pointer-events-none disabled:opacity-50;
-    isolation: isolate;
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold
+           transition-[transform,box-shadow,background-color,border-color,color] duration-150 ease-out
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-paper
+           active:translate-y-px disabled:pointer-events-none disabled:opacity-50;
   }
-  .btn > * { position: relative; z-index: 1; }
-  .btn::after {
-    content: '';
-    position: absolute; top: 0; left: -130%; width: 55%; height: 100%;
-    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-    transform: skewX(-20deg);
-    pointer-events: none; z-index: 0;
-  }
-  .btn:hover::after { animation: btn-shine 0.7s ease; }
-  @keyframes btn-shine { 0% { left: -130%; } 100% { left: 150%; } }
-
-  /* Primary: a living gradient that slides + glow-lift */
+  /* Primary action = near-black (premium, editorial) */
   .btn-primary {
-    @apply btn text-white;
-    background-image: linear-gradient(120deg, #6d28d9, #9333ea 30%, #d946ef 55%, #9333ea 80%, #6d28d9);
-    background-size: 220% 100%;
-    background-position: 0% 50%;
-    box-shadow: 0 6px 20px -8px rgba(124, 58, 237, 0.55);
-    transition: background-position 0.6s ease, box-shadow 0.25s ease, transform 0.15s ease;
+    @apply btn bg-ink-900 text-paper hover:bg-ink-800 shadow-soft;
   }
-  .btn-primary:hover {
-    background-position: 100% 50%;
-    box-shadow: 0 14px 44px -8px rgba(124, 58, 237, 0.6);
-    transform: translateY(-1px);
+  /* Coral variant for the loudest calls-to-action */
+  .btn-brand {
+    @apply btn bg-brand-500 text-white hover:bg-brand-600 shadow-soft;
   }
-
-  /* Dark: ink base that warms to a subtle gradient + lift */
   .btn-dark {
-    @apply btn text-white;
-    background-image: linear-gradient(120deg, #0b0b14, #1c1c24 60%, #33343f);
-    background-size: 180% 100%;
-    background-position: 0% 50%;
-    transition: background-position 0.6s ease, box-shadow 0.25s ease, transform 0.15s ease;
+    @apply btn bg-ink-900 text-paper hover:bg-ink-800;
   }
-  .btn-dark:hover { background-position: 100% 50%; transform: translateY(-1px); box-shadow: 0 12px 34px -12px rgba(11, 11, 20, 0.6); }
-
-  /* Outline: clean white that gains a brand border + glow-lift (no glass) */
   .btn-outline {
-    @apply btn border border-ink-200 bg-white text-ink-700;
-    transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.25s ease, transform 0.15s ease;
+    @apply btn border border-ink-300 bg-transparent text-ink-800 hover:border-ink-400 hover:bg-ink-100;
   }
-  .btn-outline:hover {
-    @apply border-brand-300 text-brand-700;
-    transform: translateY(-1px);
-    box-shadow: 0 10px 30px -14px rgba(124, 58, 237, 0.4);
-  }
-
-  /* Ghost: soft brand wash on hover */
   .btn-ghost {
-    @apply btn text-ink-600 hover:bg-brand-50 hover:text-brand-700;
+    @apply btn text-ink-700 hover:bg-ink-100;
   }
 
   /* ── Inputs ──────────────────────────────────────── */
-  /* Solid, high-contrast fields so text & the field itself are always visible
-     (not only on focus). Dark ink text on near-white. */
   .input {
-    @apply w-full rounded-xl border border-ink-200 bg-white px-3.5 py-2.5 text-sm font-medium text-ink-900 outline-none
+    @apply w-full rounded-lg border border-ink-300 bg-surface px-3.5 py-2.5 text-sm font-medium text-ink-900 outline-none
            transition placeholder:font-normal placeholder:text-ink-400
-           focus:border-brand-500 focus:ring-4 focus:ring-brand-500/15;
+           focus:border-brand-500 focus:ring-4 focus:ring-brand-500/20;
   }
-  select.input option { @apply text-ink-900; }
   .label {
     @apply mb-1.5 block text-sm font-medium text-ink-700;
   }
 
-  /* ── Glass surfaces ──────────────────────────────── */
-  .glass {
-    @apply border border-white/50 bg-white/70 backdrop-blur-xl;
-  }
-  .glass-strong {
-    @apply border border-white/60 bg-white/85 backdrop-blur-2xl;
-  }
-  /* Default card = frosted glass panel (more opaque now so text stays crisp) */
+  /* ── Surfaces — solid, hairline-bordered (no glass) ─ */
   .card {
-    @apply rounded-2xl border border-white/70 bg-white/90 shadow-glass backdrop-blur-md;
+    @apply rounded-2xl border border-ink-200 bg-surface shadow-card;
   }
-  /* Opaque card for dense data (tables) where blur hurts legibility */
   .card-solid {
-    @apply rounded-2xl border border-ink-200/70 bg-white shadow-soft;
+    @apply rounded-2xl border border-ink-200 bg-surface shadow-card;
   }
   .card-hover {
-    @apply transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:shadow-glass-lg;
+    @apply transition-[transform,box-shadow,border-color] duration-200 ease-out hover:-translate-y-1 hover:border-ink-300 hover:shadow-lift;
+  }
+  /* Legacy "glass" names now resolve to solid surfaces */
+  .glass {
+    @apply border border-ink-200 bg-paper/95;
+  }
+  .glass-strong {
+    @apply border border-ink-200 bg-surface;
   }
 
   .badge {
-    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium;
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold;
   }
   .chip {
-    @apply inline-flex items-center gap-1.5 rounded-lg border border-white/50 bg-white/60 px-2.5 py-1 text-xs font-medium text-ink-600 backdrop-blur-sm;
+    @apply inline-flex items-center gap-1.5 rounded-full border border-ink-200 bg-ink-50 px-2.5 py-1 text-xs font-medium text-ink-700;
   }
+  /* "gradient text" now a solid coral accent */
   .text-gradient {
-    background-image: linear-gradient(120deg, #7c3aed 0%, #c026d3 50%, #7c3aed 100%);
-    @apply bg-clip-text text-transparent;
+    @apply text-brand-500;
   }
   .skeleton {
-    @apply relative overflow-hidden rounded-lg bg-ink-100/70;
+    @apply relative overflow-hidden rounded-lg bg-ink-100;
   }
   .skeleton::after {
     content: '';
@@ -160,98 +111,6 @@
 }
 
 @keyframes shimmer { 100% { transform: translateX(100%); } }
-
-/* ── Animated rotating gradient edge-glow for cards ──────────────────
-   A conic gradient travels around the card's border only (masked to a thin
-   ring). Uses @property so we animate a single angle → GPU-cheap, no layout.
-   Degrades to a static border where @property is unsupported. */
-@property --ic-angle {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 0deg;
-}
-@keyframes ic-rotate { to { --ic-angle: 360deg; } }
-
-/* Edge-only technique: the card gets a SOLID center (opaque bg) and a
-   transparent border; the rotating conic sits BEHIND and peeks through the
-   1.5px border ring only. No mask, no center bleed — clean middle, glowing
-   rim. */
-.glow-card {
-  position: relative;
-  isolation: isolate;
-  border: 1.5px solid transparent;
-  background: #ffffff;              /* opaque so nothing shows through the middle */
-  background-clip: padding-box;
-  -webkit-backdrop-filter: none;
-          backdrop-filter: none;
-}
-.glow-card::before {
-  content: '';
-  position: absolute;
-  inset: -1.5px;
-  z-index: -1;
-  border-radius: inherit;
-  background: conic-gradient(
-    from var(--ic-angle),
-    transparent 6%,
-    #8b5cf6 18%,
-    #d946ef 32%,
-    #6366f1 46%,
-    transparent 62%
-  );
-  animation: ic-rotate 6s linear infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .glow-card::before { animation: none; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .glow-card::after, .glow-card::before { animation: none; }
-  .glow-card::after { opacity: 0.6; }
-}
-
-/* ── A library of distinct, performant card interactions ─────────────
-   Each card TYPE gets its own signature motion so nothing feels templated. */
-
-/* 1) SHEEN — a diagonal light streak sweeps across on hover (campaign cards) */
-.fx-sheen { position: relative; overflow: hidden; }
-.fx-sheen::before {
-  content: '';
-  position: absolute; top: 0; left: -80%; width: 55%; height: 100%;
-  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.5), transparent);
-  transform: skewX(-20deg);
-  pointer-events: none; z-index: 4; opacity: 0;
-}
-.fx-sheen:hover::before { animation: fx-sheen-move 0.85s ease; }
-@keyframes fx-sheen-move { 0% { left: -80%; opacity: 1; } 100% { left: 130%; opacity: 1; } }
-
-/* 2) TOPLINE — a gradient bar draws across the top edge on hover (trust cards) */
-.fx-topline { position: relative; }
-.fx-topline::before {
-  content: '';
-  position: absolute; top: 0; left: 12px; right: 12px; height: 3px; border-radius: 999px;
-  background: linear-gradient(90deg, #7c3aed, #d946ef, #6366f1);
-  transform: scaleX(0); transform-origin: left; transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.fx-topline:hover::before { transform: scaleX(1); }
-
-/* 3) TILT — a gentle 3D tilt + lift on hover (step / feature cards) */
-.fx-tilt { transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease; will-change: transform; }
-.fx-tilt:hover { transform: perspective(900px) rotateX(3deg) rotateY(-4deg) translateY(-6px); }
-
-/* 4) SPOTLIGHT — a soft brand glow blooms upward on hover (stat cards) */
-.fx-spotlight { position: relative; transition: box-shadow 0.35s ease, transform 0.35s ease; }
-.fx-spotlight::after {
-  content: '';
-  position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
-  background: radial-gradient(120% 80% at 50% 120%, rgba(124, 58, 237, 0.18), transparent 60%);
-  opacity: 0; transition: opacity 0.35s ease;
-}
-.fx-spotlight:hover { transform: translateY(-4px); box-shadow: 0 18px 50px -20px rgba(124, 58, 237, 0.45); }
-.fx-spotlight:hover::after { opacity: 1; }
-
-@media (prefers-reduced-motion: reduce) {
-  .fx-sheen::before, .fx-topline::before, .fx-tilt, .fx-spotlight, .fx-spotlight::after { animation: none !important; transition: none !important; transform: none !important; }
-}
 
 .safe-top { padding-top: env(safe-area-inset-top); }
 .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }

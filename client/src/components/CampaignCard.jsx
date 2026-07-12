@@ -11,7 +11,7 @@ export default function CampaignCard({ campaign, onToggleSave, to }) {
   const link = to || `/campaigns/${campaign._id}`;
 
   return (
-    <div className="card card-hover fx-sheen group flex h-full flex-col overflow-hidden">
+    <div className="card card-hover card-hover group flex h-full flex-col overflow-hidden">
       <div className="relative h-32 overflow-hidden bg-brand-gradient">
         <img
           src={campaign.bannerUrl || categoryImage(campaign.category)}
