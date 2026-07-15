@@ -26,7 +26,10 @@ export default function Logo({ to = '/', light = false, size = 34 }) {
           light ? 'text-white' : 'text-ink-950'
         }`}
       >
-        Influ<span className="text-gradient">Connect</span>
+        {/* Split for the two-tone treatment — keep it as one word to a reader.
+            Written this way the literal "Collably" never appears in source, so
+            a brand rename must come through here deliberately. */}
+        Colla<span className="text-gradient">bly</span>
       </span>
     </Link>
   );

@@ -9,7 +9,10 @@ const baseURL = import.meta.env.VITE_API_URL
 // 65s timeout tolerates a free-tier host cold start (which can take ~50s).
 export const api = axios.create({ baseURL, timeout: 65000 });
 
-export const TOKEN_KEY = 'influ_token';
+// Renaming this logs every existing session out. Safe to do now (no real
+// users yet); after launch a rename needs a migration or people get
+// silently signed out.
+export const TOKEN_KEY = 'collably_token';
 
 export function setAuthToken(token) {
   if (token) {
