@@ -86,3 +86,26 @@ no deploy, no code change.
 **₹499 / ₹1,999 are placeholders.** The client's v2 spec never names a price; it
 only specifies the 70% discount, the rank percentages and the thresholds. Set the
 real price before launch.
+
+---
+
+## Live infrastructure (as of the Collably rebrand)
+
+| What | Where |
+| --- | --- |
+| Site | https://collably-app.vercel.app |
+| API | https://collably-api-1yvk.onrender.com |
+| Webhook URL | https://collably-api-1yvk.onrender.com/api/subscriptions/webhook |
+| Live webhook | `TDsb3xv9AJJYLs` |
+| Test webhook | `TDspBx52HQ6JwN` |
+| Repo | https://github.com/Ritheesh777/collably |
+| Admin login | admin@collably.in |
+
+The API host carries a random suffix because `collably-api.onrender.com` was
+already taken on Render. A custom domain (e.g. `api.collably.in`) would replace
+it cleanly — Render → Settings → Custom Domains, then re-point both webhooks and
+`VITE_API_URL`.
+
+**`influconnect-api.onrender.com` still exists** as `collably-api-legacy` so
+nothing breaks mid-switch. Once your cron job and any bookmarks point at the new
+API, delete it in the Render dashboard.
