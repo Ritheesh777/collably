@@ -51,6 +51,25 @@ const userSchema = new Schema(
       email: { type: Boolean, default: true },
       browser: { type: Boolean, default: true },
     },
+
+    /**
+     * Subscription state (v2 §7, §8). Razorpay will populate this after a
+     * backend-verified payment — the frontend must never activate a plan
+     * (BR-NEW-005). Until billing ships, everyone stays on the free plan and
+     * the 3-collaboration quota applies.
+     */
+    subscription: {
+      status: {
+        type: String,
+        enum: ['none', 'active', 'expired', 'cancelled'],
+        default: 'none',
+      },
+      plan: { type: String, default: '' }, // e.g. 'monthly'
+      collabLimit: { type: Number, default: null }, // null = unlimited on plan
+      startedAt: { type: Date },
+      expiresAt: { type: Date },
+      razorpaySubscriptionId: { type: String, default: '' },
+    },
   },
   { timestamps: true }
 );

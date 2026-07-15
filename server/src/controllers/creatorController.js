@@ -6,7 +6,8 @@ import { Application } from '../models/Application.js';
 import { Review } from '../models/Review.js';
 import { User } from '../models/User.js';
 import { Collaboration } from '../models/Collaboration.js';
-import { tierFor, freePlanStatus } from '../utils/tiers.js';
+import { tierFor } from '../utils/tiers.js';
+import { quotaFor } from '../utils/quota.js';
 import {
   hasAcceptedCollaboration,
   sanitizeCreatorProfile,
@@ -128,7 +129,7 @@ export const getDashboard = asyncHandler(async (req, res) => {
     success: true,
     stats: { applicationsSent, accepted, pending, completedCollabs },
     tier: tierFor(completedCollabs),
-    freePlan: freePlanStatus(completedCollabs),
+    quota: await quotaFor(req.user, 'creator'), // §35
     recentApplications,
   });
 });

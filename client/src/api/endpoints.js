@@ -43,7 +43,11 @@ export const campaignApi = {
   featured: () => api.get('/campaigns/featured').then((r) => r.data),
   mine: (params) => api.get('/campaigns/mine', { params }).then((r) => r.data),
   get: (id) => api.get(`/campaigns/${id}`).then((r) => r.data),
-  create: (data) => api.post('/campaigns', data).then((r) => r.data),
+  // idempotencyKey ensures a double-click / retry can never create duplicates
+  create: (data, idempotencyKey) =>
+    api
+      .post('/campaigns', data, idempotencyKey ? { headers: { 'Idempotency-Key': idempotencyKey } } : undefined)
+      .then((r) => r.data),
   update: (id, data) => api.put(`/campaigns/${id}`, data).then((r) => r.data),
   setStatus: (id, status) => api.patch(`/campaigns/${id}/status`, { status }).then((r) => r.data),
   uploadMedia: (id, form) => api.post(`/campaigns/${id}/media`, form).then((r) => r.data),

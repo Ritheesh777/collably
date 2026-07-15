@@ -5,7 +5,9 @@ import { Campaign, rangesForFollowerCount } from '../models/Campaign.js';
 import { CreatorProfile } from '../models/CreatorProfile.js';
 import { Collaboration } from '../models/Collaboration.js';
 import { Conversation } from '../models/Conversation.js';
+import { User } from '../models/User.js';
 import { notify } from '../utils/notify.js';
+import { assertCanCollaborate } from '../utils/quota.js';
 
 /**
  * Creates the private conversation for a collaboration.
@@ -172,6 +174,12 @@ export const decideApplication = asyncHandler(async (req, res) => {
   await application.save();
 
   if (decision === 'accepted') {
+    // §6/§36 — check quota for BOTH sides immediately before creating the
+    // collaboration. A collaboration consumes one free slot from each party.
+    await assertCanCollaborate(req.user, 'company');
+    const creatorUser = await User.findById(application.creator);
+    await assertCanCollaborate(creatorUser, 'creator');
+
     // Mutual agreement reached → create the collaboration AND unlock chat (§3, §6)
     const collab = await Collaboration.create({
       campaign: application.campaign._id,
@@ -210,6 +218,11 @@ export const respondToInvitation = asyncHandler(async (req, res) => {
     throw ApiError.badRequest('No pending invitation to respond to');
 
   if (req.body.accept) {
+    // §6/§36 — quota check for both parties BEFORE the collaboration exists
+    await assertCanCollaborate(req.user, 'creator');
+    const companyUser = await User.findById(application.company);
+    await assertCanCollaborate(companyUser, 'company');
+
     application.status = 'accepted';
     application.respondedAt = new Date();
     await application.save();

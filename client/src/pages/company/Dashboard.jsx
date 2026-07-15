@@ -3,6 +3,7 @@ import { useAsync } from '../../hooks/useAsync.js';
 import { companyApi } from '../../api/endpoints.js';
 import { PageLoader, StatCard, StatusBadge, EmptyState } from '../../components/ui.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
+import QuotaCard from '../../components/QuotaCard.jsx';
 import { timeAgo } from '../../utils/format.js';
 import { IconCampaign, IconInbox, IconHandshake, IconTrending, IconPlus, IconArrowRight } from '../../components/icons.jsx';
 
@@ -11,7 +12,7 @@ export default function CompanyDashboard() {
   const { data, loading } = useAsync(() => companyApi.dashboard(), []);
   if (loading) return <PageLoader />;
 
-  const { stats, recentCampaigns = [], recentApplications = [] } = data || {};
+  const { stats, recentCampaigns = [], recentApplications = [], quota } = data || {};
 
   return (
     <div className="space-y-6">
@@ -31,6 +32,8 @@ export default function CompanyDashboard() {
         <StatCard label="Accepted Creators" value={stats?.acceptedCreators} icon={IconHandshake} accent="emerald" delay={0.1} />
         <StatCard label="Total Campaigns" value={stats?.totalCampaigns} icon={IconTrending} accent="rose" delay={0.15} />
       </div>
+
+      <QuotaCard quota={quota} role="company" />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="card p-5">

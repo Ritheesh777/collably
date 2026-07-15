@@ -12,6 +12,7 @@ import {
   sanitizeCompanyProfile,
   maskedContact,
 } from '../utils/privacy.js';
+import { quotaFor } from '../utils/quota.js';
 
 // GET /api/company/me
 export const getMyProfile = asyncHandler(async (req, res) => {
@@ -99,6 +100,7 @@ export const getDashboard = asyncHandler(async (req, res) => {
   res.json({
     success: true,
     stats: { activeCampaigns, totalCampaigns, pendingApplications, acceptedCreators },
+    quota: await quotaFor(req.user, 'company'), // §35 free collaborations remaining
     recentCampaigns,
     recentApplications,
   });

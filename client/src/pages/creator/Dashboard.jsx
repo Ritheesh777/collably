@@ -4,6 +4,7 @@ import { useAsync } from '../../hooks/useAsync.js';
 import { creatorApi, campaignApi } from '../../api/endpoints.js';
 import { PageLoader, StatCard, StatusBadge, EmptyState } from '../../components/ui.jsx';
 import CampaignCard from '../../components/CampaignCard.jsx';
+import QuotaCard from '../../components/QuotaCard.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { Stagger, StaggerItem } from '../../lib/motion.jsx';
 import { IconSend, IconHandshake, IconClock, IconSearch, IconArrowRight, IconSparkles, IconTrophy } from '../../components/icons.jsx';
@@ -18,7 +19,7 @@ export default function CreatorDashboard() {
   }, []);
 
   if (loading) return <PageLoader />;
-  const { stats, recentApplications = [], tier, freePlan } = data || {};
+  const { stats, recentApplications = [], tier, quota } = data || {};
 
   return (
     <div className="space-y-6">
@@ -38,7 +39,7 @@ export default function CreatorDashboard() {
         <StatCard label="Pending" value={stats?.pending} icon={IconClock} accent="amber" delay={0.1} />
       </div>
 
-      {freePlan && <FreePlanCard plan={freePlan} />}
+      <QuotaCard quota={quota} role="creator" />
       {tier && <TierCard tier={tier} />}
 
       <div>
@@ -132,52 +133,6 @@ function TierCard({ tier }) {
       </div>
       <div className="border-t border-ink-200 bg-ink-50 px-5 py-2.5 text-xs text-ink-500">
         Only collaborations completed on InfluConnect count toward your tier.
-      </div>
-    </div>
-  );
-}
-
-/**
- * Free-plan quota (§11): 3 successful collaborations free, then a subscription
- * is required. Billing ships in v2 — until then this informs, it doesn't block.
- */
-function FreePlanCard({ plan }) {
-  const pct = Math.min(100, Math.round((plan.used / plan.limit) * 100));
-  const done = plan.requiresSubscription;
-  return (
-    <div className={`card p-5 ${done ? 'border-brand-300' : ''}`}>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-base font-semibold text-ink-950">
-            {done ? 'Free collaborations used up' : 'Free plan'}
-          </h2>
-          <p className="mt-0.5 text-sm text-ink-500">
-            {done ? (
-              <>
-                You've completed all {plan.limit} free collaborations.
-                {plan.enforced
-                  ? ' Subscribe to apply for new ones.'
-                  : ' Subscriptions launch soon — you can keep applying free for now.'}
-              </>
-            ) : (
-              <>
-                <span className="font-semibold text-ink-800">{plan.remaining}</span> of {plan.limit} free
-                collaborations remaining
-              </>
-            )}
-          </p>
-        </div>
-        {done && (
-          <span className="badge bg-brand-50 text-brand-700">
-            {plan.firstSubscriptionDiscount}% off your first plan
-          </span>
-        )}
-      </div>
-      <div className="mt-3 h-2 overflow-hidden rounded-full bg-ink-100">
-        <div
-          className={`h-full rounded-full transition-all ${done ? 'bg-brand-500' : 'bg-ink-900'}`}
-          style={{ width: `${pct}%` }}
-        />
       </div>
     </div>
   );

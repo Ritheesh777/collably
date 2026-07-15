@@ -7,20 +7,53 @@ import { Application } from '../models/Application.js';
 import { SavedCampaign } from '../models/SavedCampaign.js';
 import { CreatorProfile } from '../models/CreatorProfile.js';
 import { rangesForFollowerCount } from '../models/Campaign.js';
+import { runOnce } from '../utils/idempotency.js';
+import crypto from 'crypto';
+
+/**
+ * Fallback idempotency key for clients that send none: a fingerprint of who +
+ * what + a 20-second window. Repeat submissions of the same campaign inside
+ * that window collapse into one; posting the same title again later is fine.
+ */
+function autoKey(userId, body) {
+  const bucket = Math.floor(Date.now() / 20000);
+  const raw = `${userId}|${body?.title || ''}|${body?.description || ''}|${bucket}`;
+  return 'auto_' + crypto.createHash('sha256').update(raw).digest('hex').slice(0, 32);
+}
 
 // POST /api/campaigns  (company)
+// BR-NEW-001: one submission must create EXACTLY one campaign.
 export const createCampaign = asyncHandler(async (req, res) => {
   const companyProfile = await CompanyProfile.findOne({ user: req.user._id });
-  const campaign = await Campaign.create({
-    ...req.body,
-    company: req.user._id,
-    companyProfile: companyProfile?._id,
+
+  const create = async () => {
+    const campaign = await Campaign.create({
+      ...req.body,
+      company: req.user._id,
+      companyProfile: companyProfile?._id,
+    });
+    if (companyProfile) {
+      companyProfile.campaignsPosted += 1;
+      await companyProfile.save();
+    }
+    return campaign;
+  };
+
+  // If the client didn't send a key (older build, proxy retry), derive a
+  // deterministic one from the payload + a 20s window. Concurrent duplicates
+  // then collide on the unique index instead of racing a "is there a recent
+  // one?" lookup — which every parallel request passes at the same instant.
+  const key = req.headers['idempotency-key'] || autoKey(req.user._id, req.body);
+
+  const { result: campaign, idempotent } = await runOnce({
+    key,
+    user: req.user._id,
+    resource: 'campaign',
+    work: create,
+    load: (id) => Campaign.findById(id),
   });
-  if (companyProfile) {
-    companyProfile.campaignsPosted += 1;
-    await companyProfile.save();
-  }
-  res.status(201).json({ success: true, campaign });
+
+  res.status(201).json({ success: true, campaign, idempotent });
 });
 
 // GET /api/campaigns/mine  (company)

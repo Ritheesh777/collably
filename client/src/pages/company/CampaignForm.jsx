@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { campaignApi } from '../../api/endpoints.js';
 import { Field, PageLoader } from '../../components/ui.jsx';
+import { IconSpinner } from '../../components/icons.jsx';
 import {
   CAMPAIGN_CATEGORIES,
   CAMPAIGN_TYPES,
@@ -36,6 +37,13 @@ export default function CampaignForm() {
   const [banner, setBanner] = useState(null);
   const [loading, setLoading] = useState(isEdit);
   const [busy, setBusy] = useState(false);
+  // setBusy is async, so a fast double-click can fire twice before the button
+  // re-renders as disabled. A ref blocks the second call synchronously.
+  const submitting = useRef(false);
+  // One key per form session → the backend collapses any retry into one campaign.
+  const idemKey = useRef(
+    typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random())
+  );
 
   useEffect(() => {
     if (!isEdit) return;
@@ -81,15 +89,17 @@ export default function CampaignForm() {
   });
 
   const submit = async (status) => {
+    if (submitting.current) return; // synchronous double-click guard
     if (!form.title || form.description.length < 10)
       return toast.error('Add a title and a description (min 10 chars).');
+    submitting.current = true;
     setBusy(true);
     try {
       let campaign;
       if (isEdit) {
         ({ campaign } = await campaignApi.update(id, buildPayload(status)));
       } else {
-        ({ campaign } = await campaignApi.create(buildPayload(status)));
+        ({ campaign } = await campaignApi.create(buildPayload(status), idemKey.current));
       }
       if (banner) {
         const fd = new FormData();
@@ -100,6 +110,7 @@ export default function CampaignForm() {
       navigate(`/company/campaigns/${campaign._id}`);
     } catch (err) {
       toast.error(err.message);
+      submitting.current = false; // allow a genuine retry after a failure
     } finally {
       setBusy(false);
     }
@@ -191,14 +202,21 @@ export default function CampaignForm() {
           <textarea className="input min-h-[90px]" value={form.terms} onChange={set('terms')} placeholder="Any specific requirements or terms…" />
         </Field>
 
-        <div className="flex flex-col gap-2 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">
+        <div className="flex flex-col gap-2 border-t border-ink-200 pt-5 sm:flex-row sm:justify-end">
           {!isEdit && (
             <button className="btn-outline" onClick={() => submit('draft')} disabled={busy}>
-              Save as Draft
+              {busy ? 'Saving…' : 'Save as Draft'}
             </button>
           )}
           <button className="btn-primary" onClick={() => submit(isEdit ? undefined : 'active')} disabled={busy}>
-            {busy ? 'Saving…' : isEdit ? 'Save Changes' : 'Publish Campaign'}
+            {busy && <IconSpinner className="h-4 w-4 animate-spin" />}
+            {busy
+              ? isEdit
+                ? 'Saving Changes…'
+                : 'Creating Campaign…'
+              : isEdit
+                ? 'Save Changes'
+                : 'Publish Campaign'}
           </button>
         </div>
       </div>
