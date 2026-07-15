@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext.jsx';
 import QuotaCard from '../../components/QuotaCard.jsx';
 import { timeAgo } from '../../utils/format.js';
 import { IconCampaign, IconInbox, IconHandshake, IconTrending, IconPlus, IconArrowRight } from '../../components/icons.jsx';
+import RankCard from '../../components/RankCard.jsx';
 
 export default function CompanyDashboard() {
   const { user } = useAuth();
@@ -34,6 +35,7 @@ export default function CompanyDashboard() {
       </div>
 
       <QuotaCard quota={quota} role="company" />
+      <RankCard />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="card p-5">

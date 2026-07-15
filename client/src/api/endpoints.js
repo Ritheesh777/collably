@@ -71,11 +71,34 @@ export const applicationApi = {
 
 // ── Chat ──────────────────────────────────────────────
 export const chatApi = {
-  conversations: () => api.get('/chat/conversations').then((r) => r.data),
+  conversations: (params) => api.get('/chat/conversations', { params }).then((r) => r.data),
   messages: (id) => api.get(`/chat/conversations/${id}/messages`).then((r) => r.data),
   send: (id, data) => api.post(`/chat/conversations/${id}/messages`, data).then((r) => r.data),
+  // §26/§27 — category (primary|general|archived) and mute are per-user
+  setPrefs: (id, data) => api.patch(`/chat/conversations/${id}/prefs`, data).then((r) => r.data),
   deleteConversation: (id) => api.delete(`/chat/conversations/${id}`).then((r) => r.data),
   deleteMessage: (id) => api.delete(`/chat/messages/${id}`).then((r) => r.data),
+  // §25 — consumes the photo; the server drops the URL after this call
+  viewOnce: (id) => api.post(`/chat/messages/${id}/view`).then((r) => r.data),
+  blocked: () => api.get('/chat/block').then((r) => r.data),
+  block: (userId, reason) => api.post('/chat/block', { userId, reason }).then((r) => r.data),
+  unblock: (userId) => api.delete(`/chat/block/${userId}`).then((r) => r.data),
+};
+
+// §13–§16 — ranking, trophies, leaderboard
+export const rankingApi = {
+  me: () => api.get('/ranking/me').then((r) => r.data),
+  user: (id) => api.get(`/ranking/user/${id}`).then((r) => r.data),
+  leaderboard: (params) => api.get('/ranking/leaderboard', { params }).then((r) => r.data),
+};
+
+// §33/§34 — help, support tickets, account deletion
+export const supportApi = {
+  info: () => api.get('/support/info').then((r) => r.data),
+  tickets: () => api.get('/support/tickets').then((r) => r.data),
+  createTicket: (data) => api.post('/support/tickets', data).then((r) => r.data),
+  deleteAccount: (password, confirm) =>
+    api.delete('/support/account', { data: { password, confirm } }).then((r) => r.data),
 };
 
 // ── Collaborations / Reviews / Notifications / Saved / Complaints ─
@@ -144,4 +167,26 @@ export const adminApi = {
   complaints: (params) => api.get('/admin/complaints', { params }).then((r) => r.data),
   resolveComplaint: (id, data) =>
     api.patch(`/admin/complaints/${id}`, data).then((r) => r.data),
+
+  // §29–§32 — relationship inspection (admin-only, unmasked)
+  inspectCompany: (id) => api.get(`/admin/inspect/company/${id}`).then((r) => r.data),
+  inspectCreator: (id) => api.get(`/admin/inspect/creator/${id}`).then((r) => r.data),
+  inspectCampaign: (id) => api.get(`/admin/inspect/campaign/${id}`).then((r) => r.data),
+
+  // §11/§13/§16/§33 — platform configuration
+  settings: () => api.get('/admin/settings').then((r) => r.data),
+  updateSettings: (data) => api.patch('/admin/settings', data).then((r) => r.data),
+
+  plans: () => api.get('/admin/plans').then((r) => r.data),
+  createPlan: (data) => api.post('/admin/plans', data).then((r) => r.data),
+  updatePlan: (id, data) => api.patch(`/admin/plans/${id}`, data).then((r) => r.data),
+  deletePlan: (id) => api.delete(`/admin/plans/${id}`).then((r) => r.data),
+
+  coupons: () => api.get('/admin/coupons').then((r) => r.data),
+  createCoupon: (data) => api.post('/admin/coupons', data).then((r) => r.data),
+  updateCoupon: (id, data) => api.patch(`/admin/coupons/${id}`, data).then((r) => r.data),
+  deleteCoupon: (id) => api.delete(`/admin/coupons/${id}`).then((r) => r.data),
+
+  tickets: (params) => api.get('/admin/tickets', { params }).then((r) => r.data),
+  respondTicket: (id, data) => api.patch(`/admin/tickets/${id}`, data).then((r) => r.data),
 };

@@ -10,6 +10,7 @@ import {
   IconDashboard, IconCampaign, IconPlusCircle, IconInbox, IconSearch, IconMessage,
   IconBell, IconStar, IconCompany, IconUser, IconSettings, IconLogout, IconUsers,
   IconFlag, IconSend, IconBookmark, IconMenu, IconX, IconSparkles,
+  IconSupport, IconSliders, IconTicket, IconTag,
 } from '../components/icons.jsx';
 
 const NAVS = {
@@ -24,6 +25,7 @@ const NAVS = {
     { to: '/reviews', label: 'Reviews', icon: IconStar },
     { to: '/subscribe', label: 'Subscription', icon: IconSparkles },
     { to: '/company/profile', label: 'Profile', icon: IconCompany },
+    { to: '/support', label: 'Help & Support', icon: IconSupport },
     { to: '/settings', label: 'Settings', icon: IconSettings },
   ],
   creator: [
@@ -36,6 +38,7 @@ const NAVS = {
     { to: '/reviews', label: 'Reviews', icon: IconStar },
     { to: '/subscribe', label: 'Subscription', icon: IconSparkles },
     { to: '/creator/profile', label: 'Profile', icon: IconUser },
+    { to: '/support', label: 'Help & Support', icon: IconSupport },
     { to: '/settings', label: 'Settings', icon: IconSettings },
   ],
   admin: [
@@ -43,6 +46,9 @@ const NAVS = {
     { to: '/admin/users', label: 'Manage Users', icon: IconUsers },
     { to: '/admin/campaigns', label: 'Manage Campaigns', icon: IconCampaign },
     { to: '/admin/complaints', label: 'Reports', icon: IconFlag },
+    { to: '/admin/tickets', label: 'Support Inbox', icon: IconTicket },
+    { to: '/admin/plans', label: 'Plans & Coupons', icon: IconTag },
+    { to: '/admin/settings', label: 'Settings', icon: IconSliders },
   ],
 };
 

@@ -49,11 +49,17 @@ const Notifications = lazy(() => import('./pages/shared/Notifications.jsx'));
 const Reviews = lazy(() => import('./pages/shared/Reviews.jsx'));
 const Settings = lazy(() => import('./pages/shared/Settings.jsx'));
 const Subscribe = lazy(() => import('./pages/shared/Subscribe.jsx'));
+const Support = lazy(() => import('./pages/shared/Support.jsx'));
+const CompanyView = lazy(() => import('./pages/shared/CompanyView.jsx'));
 
 const AdminDashboard = lazy(() => import('./pages/admin/Dashboard.jsx'));
 const ManageUsers = lazy(() => import('./pages/admin/ManageUsers.jsx'));
 const ManageCampaigns = lazy(() => import('./pages/admin/ManageCampaigns.jsx'));
 const Complaints = lazy(() => import('./pages/admin/Complaints.jsx'));
+const AdminSettings = lazy(() => import('./pages/admin/Settings.jsx'));
+const AdminPlans = lazy(() => import('./pages/admin/Plans.jsx'));
+const AdminTickets = lazy(() => import('./pages/admin/Tickets.jsx'));
+const Inspect = lazy(() => import('./pages/admin/Inspect.jsx'));
 
 export default function App() {
   const location = useLocation();
@@ -146,6 +152,11 @@ export default function App() {
             <Route path="/reviews" element={<Reviews />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/subscribe" element={<Subscribe />} />
+            <Route path="/support" element={<Support />} />
+            {/* §22/§23 — profile navigation needs a destination for BOTH sides:
+                a creator clicking a company logo had nowhere to go before. */}
+            <Route path="/companies/:id" element={<CompanyView />} />
+            <Route path="/creators/:id" element={<CreatorView />} />
           </Route>
 
           {/* Admin */}
@@ -160,6 +171,13 @@ export default function App() {
             <Route path="/admin/users" element={<ManageUsers />} />
             <Route path="/admin/campaigns" element={<ManageCampaigns />} />
             <Route path="/admin/complaints" element={<Complaints />} />
+            <Route path="/admin/tickets" element={<AdminTickets />} />
+            <Route path="/admin/plans" element={<AdminPlans />} />
+            <Route path="/admin/settings" element={<AdminSettings />} />
+            {/* §29–§32 — relationship inspection, navigable between entities */}
+            <Route path="/admin/company/:id" element={<Inspect kind="company" />} />
+            <Route path="/admin/creator/:id" element={<Inspect kind="creator" />} />
+            <Route path="/admin/campaign/:id" element={<Inspect kind="campaign" />} />
           </Route>
 
           <Route path="/404" element={<NotFound />} />

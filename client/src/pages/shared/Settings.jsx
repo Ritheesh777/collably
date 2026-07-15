@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { authApi, notificationApi } from '../../api/endpoints.js';
 import { Field } from '../../components/ui.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
+import DeleteAccount from '../../components/DeleteAccount.jsx';
 
 export default function Settings() {
   const { user, logout, refresh } = useAuth();
@@ -47,7 +48,7 @@ export default function Settings() {
       <h1 className="text-2xl font-bold text-slate-900">Settings</h1>
 
       <div className="card p-6">
-        <h2 className="font-semibold text-slate-800">Change Password</h2>
+        <h2 className="font-semibold text-ink-950">Change Password</h2>
         <form onSubmit={changePassword} className="mt-4 space-y-4">
           <Field label="Current Password">
             <input type="password" className="input" value={pw.currentPassword} onChange={(e) => setPw({ ...pw, currentPassword: e.target.value })} required />
@@ -67,18 +68,21 @@ export default function Settings() {
       </div>
 
       <div className="card p-6">
-        <h2 className="font-semibold text-slate-800">Notification Preferences</h2>
+        <h2 className="font-semibold text-ink-950">Notification Preferences</h2>
         <div className="mt-4 space-y-3">
           <Toggle label="Email notifications" checked={prefs.email} onChange={(v) => savePrefs({ ...prefs, email: v })} />
           <Toggle label="Browser notifications" checked={prefs.browser} onChange={(v) => savePrefs({ ...prefs, browser: v })} />
         </div>
       </div>
 
-      <div className="card border-rose-200 p-6">
-        <h2 className="font-semibold text-rose-600">Danger Zone</h2>
-        <p className="mt-1 text-sm text-slate-500">Log out of your account on this device.</p>
-        <button onClick={doLogout} className="btn-outline mt-4 border-rose-300 text-rose-600">Logout</button>
+      <div className="card p-6">
+        <h2 className="font-semibold text-ink-950">Sign out</h2>
+        <p className="mt-1 text-sm text-ink-500">Log out of your account on this device.</p>
+        <button onClick={doLogout} className="btn-outline mt-4">Logout</button>
       </div>
+
+      {/* §34 — staged deletion with password re-authentication */}
+      <DeleteAccount />
     </div>
   );
 }
@@ -86,11 +90,11 @@ export default function Settings() {
 function Toggle({ label, checked, onChange }) {
   return (
     <label className="flex items-center justify-between">
-      <span className="text-sm text-slate-700">{label}</span>
+      <span className="text-sm text-ink-700">{label}</span>
       <button
         type="button"
         onClick={() => onChange(!checked)}
-        className={`relative h-6 w-11 rounded-full transition ${checked ? 'bg-brand-600' : 'bg-slate-300'}`}
+        className={`relative h-6 w-11 rounded-full transition ${checked ? 'bg-brand-600' : 'bg-ink-300'}`}
       >
         <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition ${checked ? 'left-[22px]' : 'left-0.5'}`} />
       </button>

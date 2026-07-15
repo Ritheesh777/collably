@@ -8,6 +8,7 @@ import QuotaCard from '../../components/QuotaCard.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { Stagger, StaggerItem } from '../../lib/motion.jsx';
 import { IconSend, IconHandshake, IconClock, IconSearch, IconArrowRight, IconSparkles, IconTrophy } from '../../components/icons.jsx';
+import RankCard from '../../components/RankCard.jsx';
 
 export default function CreatorDashboard() {
   const { user } = useAuth();
@@ -40,6 +41,7 @@ export default function CreatorDashboard() {
       </div>
 
       <QuotaCard quota={quota} role="creator" />
+      <RankCard />
       {tier && <TierCard tier={tier} />}
 
       <div>
