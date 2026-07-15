@@ -54,6 +54,9 @@ router.post('/coupons', config.createCoupon);
 router.patch('/coupons/:id', config.updateCoupon);
 router.delete('/coupons/:id', config.deleteCoupon);
 
+// Is Razorpay actually working? (§8) — creates and abandons a ₹1 order
+router.get('/payments/health', config.paymentHealth);
+
 // Support inbox (§33)
 router.get('/tickets', config.listTickets);
 router.patch('/tickets/:id', config.respondTicket);

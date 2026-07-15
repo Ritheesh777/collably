@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { adminApi } from '../../api/endpoints.js';
 import { PageLoader, Spinner, StatusBadge } from '../../components/ui.jsx';
-import { IconTag, IconPlus, IconCard, IconX } from '../../components/icons.jsx';
+import { IconTag, IconPlus, IconCard, IconX, IconCheck, IconWarning, IconSpinner } from '../../components/icons.jsx';
 
 /**
  * Subscription plans and coupons (v2 §8, §12).
@@ -17,6 +17,21 @@ export default function AdminPlans() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null); // plan being edited
   const [newCoupon, setNewCoupon] = useState(null);
+  const [health, setHealth] = useState(null);
+  const [checking, setChecking] = useState(false);
+
+  // Verifying keys by taking a real payment is a terrible feedback loop, so ask
+  // Razorpay directly instead.
+  const checkKeys = async () => {
+    setChecking(true);
+    try {
+      setHealth(await adminApi.paymentHealth());
+    } catch (e) {
+      setHealth({ ok: false, configured: true, message: e.message });
+    } finally {
+      setChecking(false);
+    }
+  };
 
   const load = () =>
     Promise.all([adminApi.plans(), adminApi.coupons()])
@@ -95,6 +110,47 @@ export default function AdminPlans() {
       <div>
         <h1 className="text-2xl font-bold text-ink-950">Plans &amp; coupons</h1>
         <p className="text-ink-500">What subscribers are charged, and what discounts they can redeem.</p>
+      </div>
+
+      {/* Are payments actually working? (§8) */}
+      <div className="card p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h2 className="flex items-center gap-2 font-semibold text-ink-950">
+              <IconCard className="h-4 w-4 text-ink-400" /> Payment gateway
+            </h2>
+            {health ? (
+              <div className="mt-1 flex flex-wrap items-center gap-2">
+                <span
+                  className={`badge inline-flex items-center gap-1 ${
+                    health.ok ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
+                  }`}
+                >
+                  {health.ok ? <IconCheck className="h-3 w-3" /> : <IconWarning className="h-3 w-3" />}
+                  {health.ok ? 'Working' : health.configured ? 'Not working' : 'Not configured'}
+                </span>
+                {health.mode && (
+                  <span
+                    className={`badge ${
+                      health.mode === 'live' ? 'bg-amber-100 text-amber-800' : 'bg-ink-100 text-ink-600'
+                    }`}
+                  >
+                    {health.mode === 'live' ? 'LIVE — real money' : 'Test mode'}
+                  </span>
+                )}
+                <span className="text-sm text-ink-500">{health.message}</span>
+              </div>
+            ) : (
+              <p className="mt-1 text-sm text-ink-500">
+                Check that Razorpay is reachable and the keys are accepted, without taking a payment.
+              </p>
+            )}
+          </div>
+          <button className="btn-outline text-xs" onClick={checkKeys} disabled={checking}>
+            {checking ? <IconSpinner className="h-3.5 w-3.5 animate-spin" /> : null}
+            {checking ? 'Checking…' : 'Check payment keys'}
+          </button>
+        </div>
       </div>
 
       {/* Plans */}

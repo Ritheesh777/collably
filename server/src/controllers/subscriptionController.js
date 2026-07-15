@@ -47,12 +47,31 @@ export const createCheckout = asyncHandler(async (req, res) => {
   // Price is computed on the SERVER. Never trust an amount sent by the client.
   const quote = await quoteOrThrow({ user: req.user, plan, couponCode: req.body.couponCode });
 
-  const order = await razorpay().orders.create({
-    amount: quote.amountPaise,
-    currency: quote.currency,
-    receipt: `sub_${req.user._id}_${Date.now()}`.slice(0, 40),
-    notes: { userId: String(req.user._id), planCode: plan.code },
-  });
+  let order;
+  try {
+    order = await razorpay().orders.create({
+      amount: quote.amountPaise,
+      currency: quote.currency,
+      receipt: `sub_${req.user._id}_${Date.now()}`.slice(0, 40),
+      notes: { userId: String(req.user._id), planCode: plan.code },
+    });
+  } catch (err) {
+    // Razorpay's SDK throws its own error shape, which fell through to the
+    // generic handler and reached the user as "Internal server error" — a dead
+    // end for them and for whoever has to diagnose it. Log the real cause for
+    // the operator, and tell the user something true and actionable.
+    const detail = err?.error?.description || err?.message || 'unknown error';
+    const isAuth = err?.statusCode === 401 || /authentication/i.test(detail);
+    console.error(
+      `[razorpay] order creation failed (${isAuth ? 'BAD API KEYS' : 'api error'}): ${detail}`
+    );
+    if (isAuth)
+      // Never expose "our keys are wrong" to a customer — that is our problem.
+      throw ApiError.badRequest(
+        'Payments are temporarily unavailable. Our team has been notified — please try again shortly.'
+      );
+    throw ApiError.badRequest(`We could not start this payment: ${detail}`);
+  }
 
   const payment = await SubscriptionPayment.create({
     user: req.user._id,

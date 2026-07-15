@@ -197,3 +197,63 @@ export const respondTicket = asyncHandler(async (req, res) => {
   await ticket.save();
   res.json({ success: true, ticket });
 });
+
+// ------------------------------------------------------- payment health (§8)
+
+/**
+ * GET /api/admin/payments/health
+ *
+ * Answers "are the Razorpay keys actually working?" without taking a payment.
+ * It creates a ₹1 order and never pays it — unpaid orders simply expire, so
+ * this is safe to run against live keys.
+ */
+export const paymentHealth = asyncHandler(async (_req, res) => {
+  const { isRazorpayConfigured, razorpay } = await import('../config/razorpay.js');
+  const { env } = await import('../config/env.js');
+
+  if (!isRazorpayConfigured())
+    return res.json({
+      success: true,
+      configured: false,
+      ok: false,
+      mode: null,
+      message: 'No Razorpay keys are set. Add RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET on the server.',
+    });
+
+  const keyId = env.razorpay.keyId || '';
+  const mode = keyId.startsWith('rzp_live_') ? 'live' : keyId.startsWith('rzp_test_') ? 'test' : 'unknown';
+
+  try {
+    const order = await razorpay().orders.create({
+      amount: 100,
+      currency: 'INR',
+      receipt: `healthcheck_${Date.now()}`.slice(0, 40),
+      notes: { purpose: 'InfluConnect key health check — not a real purchase' },
+    });
+    res.json({
+      success: true,
+      configured: true,
+      ok: true,
+      mode,
+      keyId: `${keyId.slice(0, 12)}…`, // enough to identify, never the secret
+      message:
+        mode === 'live'
+          ? 'Live keys are working. Real payments will be charged.'
+          : 'Test keys are working. Use Razorpay test cards — no real money moves.',
+      probeOrderId: order.id,
+    });
+  } catch (err) {
+    const detail = err?.error?.description || err?.message || 'unknown error';
+    res.json({
+      success: true,
+      configured: true,
+      ok: false,
+      mode,
+      keyId: `${keyId.slice(0, 12)}…`,
+      message:
+        err?.statusCode === 401 || /authentication/i.test(detail)
+          ? 'Razorpay rejected these keys. They may have been regenerated, or the key and secret may be from different accounts.'
+          : `Razorpay error: ${detail}`,
+    });
+  }
+});

@@ -187,6 +187,9 @@ export const adminApi = {
   updateCoupon: (id, data) => api.patch(`/admin/coupons/${id}`, data).then((r) => r.data),
   deleteCoupon: (id) => api.delete(`/admin/coupons/${id}`).then((r) => r.data),
 
+  // Are the Razorpay keys live and working? (creates + abandons a ₹1 order)
+  paymentHealth: () => api.get('/admin/payments/health').then((r) => r.data),
+
   tickets: (params) => api.get('/admin/tickets', { params }).then((r) => r.data),
   respondTicket: (id, data) => api.patch(`/admin/tickets/${id}`, data).then((r) => r.data),
 };
