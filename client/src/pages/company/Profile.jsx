@@ -4,6 +4,8 @@ import { useAsync } from '../../hooks/useAsync.js';
 import { companyApi } from '../../api/endpoints.js';
 import { PageLoader, Field, Avatar } from '../../components/ui.jsx';
 import { INDUSTRIES } from '../../utils/constants.js';
+import PremiumBadge from '../../components/PremiumBadge.jsx';
+import { useAuth } from '../../context/AuthContext.jsx';
 
 export default function CompanyProfile() {
   const { data, loading, reload } = useAsync(() => companyApi.me(), []);
@@ -56,6 +58,7 @@ export default function CompanyProfile() {
         <div className="flex items-end gap-4 px-6 pb-4">
           <div className="-mt-10">
             <Avatar src={profile.logoUrl} name={profile.companyName} size={80} className="ring-4 ring-white" />
+            <PremiumHint />
           </div>
           <label className="mb-2 cursor-pointer text-xs font-medium text-brand-600">
             Change logo
@@ -87,4 +90,11 @@ export default function CompanyProfile() {
       </div>
     </div>
   );
+}
+
+/** Shows the premium pill when the logged-in member's plan is active. */
+function PremiumHint() {
+  const { user } = useAuth();
+  const on = user?.subscription?.status === 'active' && new Date(user.subscription.expiresAt) > new Date();
+  return on ? <PremiumBadge size={22} /> : null;
 }

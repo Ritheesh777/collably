@@ -5,7 +5,7 @@ import { PageLoader, Spinner, StatusBadge } from '../../components/ui.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { formatDate } from '../../utils/format.js';
 import { IconCheck, IconSparkles, IconTrophy, IconHandshake } from '../../components/icons.jsx';
-import PremiumBadge from '../../components/PremiumBadge.jsx';
+import { PremiumPill } from '../../components/PremiumBadge.jsx';
 
 const RZP_SDK = 'https://checkout.razorpay.com/v1/checkout.js';
 
@@ -162,7 +162,7 @@ export default function Subscribe() {
               <h2 className="text-lg font-semibold text-ink-950 capitalize">
                 {isActive ? current.plan : 'Free plan'}
               </h2>
-              {isActive ? <PremiumBadge /> : <StatusBadge status="pending" />}
+              {isActive ? <PremiumPill /> : <StatusBadge status="pending" />}
             </div>
             <p className="mt-0.5 text-sm text-ink-500">
               {isActive

@@ -6,6 +6,7 @@ import { Avatar } from '../components/ui.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useSocket } from '../context/SocketContext.jsx';
 import { motion } from '../lib/motion.jsx';
+import PremiumBadge, { PremiumPill } from '../components/PremiumBadge.jsx';
 import {
   IconDashboard, IconCampaign, IconPlusCircle, IconInbox, IconSearch, IconMessage,
   IconBell, IconStar, IconCompany, IconUser, IconSettings, IconLogout, IconUsers,
@@ -180,6 +181,9 @@ export default function DashboardLayout() {
                 premium={user?.subscription?.status === 'active' && new Date(user.subscription.expiresAt) > new Date()}
               />
               <span className="hidden max-w-[140px] truncate text-sm font-medium text-ink-700 sm:block">{user?.name}</span>
+              {user?.subscription?.status === 'active' && new Date(user.subscription.expiresAt) > new Date() && (
+                <PremiumPill className="hidden sm:inline-flex" />
+              )}
             </Link>
           </div>
         </header>

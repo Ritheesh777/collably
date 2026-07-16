@@ -67,7 +67,7 @@ export default function CreatorView() {
               <div className="flex items-center gap-1.5">
                 <h1 className="text-xl font-bold text-ink-950">{profile.fullName}</h1>
                 {profile.user?.isAdminVerified && <IconVerified className="h-5 w-5 text-brand-600" title="Verified" />}
-                {data.premium && <PremiumBadge />}
+                {data.premium && <PremiumBadge size={22} />}
               </div>
               <div className="text-sm text-ink-400">@{profile.username}</div>
               <div className="mt-1 flex items-center gap-2 text-sm text-ink-500">

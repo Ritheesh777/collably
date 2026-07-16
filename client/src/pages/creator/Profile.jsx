@@ -6,6 +6,8 @@ import { PageLoader, Field, Avatar, StarRating } from '../../components/ui.jsx';
 import SocialsEditor from '../../components/SocialsEditor.jsx';
 import { compactNumber } from '../../utils/format.js';
 import { IconEdit, IconUsers, IconVideo, IconFile, IconX, IconPlus, IconUpload } from '../../components/icons.jsx';
+import PremiumBadge from '../../components/PremiumBadge.jsx';
+import { useAuth } from '../../context/AuthContext.jsx';
 
 export default function CreatorProfile() {
   const { data, loading, reload } = useAsync(() => creatorApi.me(), []);
@@ -92,7 +94,10 @@ export default function CreatorProfile() {
             </label>
           </div>
           <div>
-            <div className="text-lg font-bold text-ink-900">{profile.fullName}</div>
+            <div className="flex items-center gap-2 text-lg font-bold text-ink-900">
+              {profile.fullName}
+              <PremiumHint />
+            </div>
             <div className="text-sm text-ink-400">@{profile.username}</div>
             <div className="mt-1 flex items-center gap-2 text-sm">
               <StarRating value={profile.ratingAvg} /> <span className="text-ink-400">({profile.ratingCount})</span>
@@ -159,4 +164,11 @@ export default function CreatorProfile() {
       </div>
     </div>
   );
+}
+
+/** Shows the premium pill when the logged-in member's plan is active. */
+function PremiumHint() {
+  const { user } = useAuth();
+  const on = user?.subscription?.status === 'active' && new Date(user.subscription.expiresAt) > new Date();
+  return on ? <PremiumBadge size={22} /> : null;
 }

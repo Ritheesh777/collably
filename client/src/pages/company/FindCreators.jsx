@@ -72,7 +72,7 @@ export default function FindCreators() {
                       <div className="flex items-center gap-1 font-semibold text-ink-900">
                         <span className="truncate">{c.fullName}</span>
                         {c.user?.isAdminVerified && <IconVerified className="h-4 w-4 shrink-0 text-brand-600" />}
-                        {c.premium && <PremiumBadge size="sm" />}
+                        {c.premium && <PremiumBadge size={16} />}
                       </div>
                       <div className="truncate text-xs text-ink-400">@{c.username}</div>
                     </div>

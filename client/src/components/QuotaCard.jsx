@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { IconHandshake, IconSparkles } from './icons.jsx';
+import { PremiumPill } from './PremiumBadge.jsx';
 
 /**
  * Free-collaboration quota (v2 §4, §5, §35).
@@ -15,7 +16,7 @@ export default function QuotaCard({ quota, role = 'creator' }) {
     return (
       <div className="card flex items-center justify-between gap-4 p-5">
         <div className="flex items-center gap-3">
-          <span className="grid h-10 w-10 place-items-center rounded-xl bg-ink-900 text-paper">
+          <span className="grad-logo grid h-10 w-10 place-items-center rounded-xl text-white shadow-sm">
             <IconSparkles className="h-5 w-5" />
           </span>
           <div>
@@ -27,7 +28,7 @@ export default function QuotaCard({ quota, role = 'creator' }) {
             </p>
           </div>
         </div>
-        <span className="badge bg-emerald-100 text-emerald-700">Active</span>
+        <PremiumPill />
       </div>
     );
   }
