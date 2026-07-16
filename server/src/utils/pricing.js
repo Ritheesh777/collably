@@ -101,13 +101,18 @@ export async function quotePrice({ user, plan, couponCode }) {
   const effectivePercent = Math.min(rawPercent, ceiling);
   const capped = rawPercent > ceiling;
 
+  // A "free pass" coupon skips the payment rail entirely, so it is the one case
+  // allowed to reach ₹0 — the checkout will activate directly instead of asking
+  // Razorpay for a (rejected) zero-amount order.
+  const isFree = !!coupon?.freePass;
+
   let amount = Math.round(base * (1 - effectivePercent / 100));
   amount -= couponFixedPaise; // fixed coupons apply after the percentages
   const beforeFloor = amount;
-  // Never free or negative. Razorpay rejects a zero-amount order outright, so
-  // even a 100% coupon settles at this floor rather than ₹0.
-  amount = Math.max(cfg.minChargeablePaise, amount);
-  const floored = beforeFloor < cfg.minChargeablePaise;
+  // Never free or negative on the paid rail. Razorpay rejects a zero-amount
+  // order, so a normal 100% coupon settles at this floor rather than ₹0.
+  amount = isFree ? 0 : Math.max(cfg.minChargeablePaise, amount);
+  const floored = !isFree && beforeFloor < cfg.minChargeablePaise;
 
   const discount = base - amount;
 
@@ -136,6 +141,8 @@ export async function quotePrice({ user, plan, couponCode }) {
       // True when the floor — not the percentages — decided the final price.
       atMinimumCharge: floored,
       minChargeablePaise: cfg.minChargeablePaise,
+      // Free pass → the checkout activates without any payment (see controller).
+      free: isFree,
     },
     coupon: coupon ? { _id: coupon._id, code: coupon.code, description: coupon.description } : null,
     couponError,

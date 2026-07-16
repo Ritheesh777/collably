@@ -78,10 +78,24 @@ export default function Subscribe() {
   const pay = async () => {
     setPaying(true);
     try {
+      const res = await subscriptionApi.checkout(selected, applied || '');
+
+      // Free-pass coupon: the server already activated the plan — there is no
+      // payment window to open. Skip Razorpay entirely.
+      if (res.free) {
+        setCurrent(res.subscription);
+        setQuota(res.quota);
+        toast.success('Subscription activated — free!');
+        refresh();
+        const me = await subscriptionApi.me();
+        setPayments(me.payments || []);
+        return;
+      }
+
       const ok = await loadRazorpay();
       if (!ok) throw new Error('Could not load the payment window. Check your connection.');
 
-      const { order, keyId, quote: q } = await subscriptionApi.checkout(selected, applied || '');
+      const { order, keyId, quote: q } = res;
 
       const rzp = new window.Razorpay({
         key: keyId,
@@ -278,7 +292,15 @@ export default function Subscribe() {
 
         <button className="btn-primary mt-5 w-full py-3 text-base" onClick={pay} disabled={paying || quoting || !quote}>
           {paying ? <Spinner className="h-4 w-4" /> : <IconHandshake className="h-4 w-4" />}
-          {paying ? 'Opening payment…' : quote ? `Pay ${rupees(quote.amount)} securely` : 'Select a plan'}
+          {paying
+            ? b?.free
+              ? 'Activating…'
+              : 'Opening payment…'
+            : quote
+              ? b?.free
+                ? 'Activate free subscription'
+                : `Pay ${rupees(quote.amount)} securely`
+              : 'Select a plan'}
         </button>
         <p className="mt-2 text-center text-xs text-ink-400">
           Secured by Razorpay. This pays for your Collably plan only — payments to creators stay

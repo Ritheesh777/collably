@@ -242,6 +242,7 @@ export default function AdminPlans() {
                 usageLimit: '',
                 isActive: true,
                 overridesCap: false,
+                freePass: false,
               })
             }
           >
@@ -260,7 +261,10 @@ export default function AdminPlans() {
                   <span className="badge bg-emerald-50 text-emerald-700">
                     {c.type === 'percent' ? `${c.value}% off` : `${rupees(c.value)} off`}
                   </span>
-                  {c.overridesCap && (
+                  {c.freePass && (
+                    <span className="badge bg-violet-100 text-violet-800">Free (₹0)</span>
+                  )}
+                  {c.overridesCap && !c.freePass && (
                     <span className="badge bg-amber-100 text-amber-800">Ignores cap</span>
                   )}
                   {!c.isActive && <span className="badge bg-ink-200 text-ink-600">Inactive</span>}
@@ -377,6 +381,25 @@ function CouponForm({ c, setC, onSave, onCancel }) {
             Lets this coupon discount beyond the cap — up to 100%. Use for a ₹1 payment test. The
             price still floors at ₹1 because Razorpay rejects zero-amount orders. Deactivate the
             coupon before launch.
+          </span>
+        </span>
+      </label>
+
+      {/* Free pass: the only way to ₹0. Skips Razorpay entirely and activates
+          the plan directly, so it works even with no gateway. Powerful — limit it. */}
+      <label className="mt-2 flex cursor-pointer items-start gap-2.5 rounded-lg border border-violet-200 bg-violet-50/40 p-3">
+        <input
+          type="checkbox"
+          className="mt-0.5 h-4 w-4 shrink-0 accent-violet-600"
+          checked={!!c.freePass}
+          onChange={(e) => setC({ ...c, freePass: e.target.checked, value: e.target.checked ? 100 : c.value, type: e.target.checked ? 'percent' : c.type })}
+        />
+        <span className="text-sm">
+          <span className="font-medium text-ink-900">Free pass — makes it ₹0 and activates instantly</span>
+          <span className="mt-0.5 block text-xs leading-relaxed text-ink-500">
+            No payment window at all — the subscription switches on directly. The only way to reach
+            ₹0, since Razorpay refuses zero-amount orders. Set a tight usage limit and deactivate it
+            before launch, or anyone with the code gets a free subscription.
           </span>
         </span>
       </label>

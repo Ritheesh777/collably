@@ -37,15 +37,49 @@ export const getQuote = asyncHandler(async (req, res) => {
 
 // POST /api/subscriptions/checkout { planCode, couponCode } — creates a Razorpay order
 export const createCheckout = asyncHandler(async (req, res) => {
-  if (!isRazorpayConfigured())
-    throw ApiError.badRequest('Payments are not configured yet. Please try again later.');
-
   const plan = await SubscriptionPlan.findOne({ code: req.body.planCode, isActive: true });
   if (!plan) throw ApiError.notFound('Plan not found');
   if (plan.audience !== req.user.role) throw ApiError.forbidden('That plan is not for your account type');
 
   // Price is computed on the SERVER. Never trust an amount sent by the client.
   const quote = await quoteOrThrow({ user: req.user, plan, couponCode: req.body.couponCode });
+
+  // ── Free-pass path (§ ₹0 comp) ──────────────────────────────────────────────
+  // A ₹0 total means a freePass coupon applied. Razorpay cannot process ₹0, so
+  // there is deliberately no gateway hop: record a paid ₹0 payment and activate
+  // directly. This is why it works even when Razorpay is unconfigured or its
+  // website check is still pending.
+  if (quote.amountPaise === 0) {
+    const payment = await SubscriptionPayment.create({
+      user: req.user._id,
+      plan: plan._id,
+      planCode: plan.code,
+      audience: plan.audience,
+      basePaise: quote.basePaise,
+      discountPaise: quote.discountPaise,
+      amountPaise: 0,
+      currency: quote.currency,
+      breakdown: quote.breakdown,
+      coupon: quote.coupon?._id,
+      couponCode: quote.coupon?.code || '',
+      // No Razorpay order exists; stamp a synthetic id so the unique index and
+      // the audit trail still have something to key on.
+      razorpayOrderId: `free_${req.user._id}_${Date.now()}`,
+      status: 'created',
+    });
+    await activateFromPayment(payment, { razorpayPaymentId: 'free_pass' });
+    const user = await User.findById(req.user._id);
+    return res.status(201).json({
+      success: true,
+      free: true,
+      subscription: user.subscription,
+      quota: await quotaFor(user, user.role === 'company' ? 'company' : 'creator'),
+    });
+  }
+
+  // ── Paid path — needs a working gateway ─────────────────────────────────────
+  if (!isRazorpayConfigured())
+    throw ApiError.badRequest('Payments are not configured yet. Please try again later.');
 
   let order;
   try {

@@ -32,6 +32,18 @@ const couponSchema = new Schema(
      * rejects a zero-amount order, so a truly ₹0 checkout cannot exist.
      */
     overridesCap: { type: Boolean, default: false },
+
+    /**
+     * "Free pass": makes the subscription genuinely ₹0 and activates it WITHOUT
+     * touching Razorpay at all — no payment window, no gateway.
+     *
+     * This is the only way to reach ₹0, precisely because Razorpay refuses a
+     * zero-amount order. It bypasses the ₹1 floor and the payment rail entirely,
+     * so it is powerful: guard it with usageLimit / perUserLimit / expiry, and
+     * keep it admin-only. Used for comps, first-month-free promos, and testing
+     * activation without a working gateway.
+     */
+    freePass: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
