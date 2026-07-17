@@ -5,7 +5,14 @@ dotenv.config();
 export const env = {
   port: process.env.PORT || 5000,
   nodeEnv: process.env.NODE_ENV || 'development',
-  clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
+  // CLIENT_URL may hold several comma-separated origins (apex, www, the old
+  // vercel URL during a domain switch). clientUrl is the canonical first one;
+  // clientOrigins is the full CORS allow-list.
+  clientUrl: (process.env.CLIENT_URL || 'http://localhost:5173').split(',')[0].trim(),
+  clientOrigins: (process.env.CLIENT_URL || 'http://localhost:5173')
+    .split(',')
+    .map((u) => u.trim())
+    .filter(Boolean),
   mongoUri: process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/collably',
   jwtSecret: process.env.JWT_SECRET || 'dev_insecure_secret_change_me',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',

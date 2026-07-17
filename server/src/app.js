@@ -36,7 +36,7 @@ export function createApp() {
 
   app.use(
     cors({
-      origin: [env.clientUrl, 'http://localhost:5173', 'capacitor://localhost', 'http://localhost'],
+      origin: [...env.clientOrigins, 'http://localhost:5173', 'capacitor://localhost', 'http://localhost'],
       credentials: true,
     })
   );

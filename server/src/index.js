@@ -13,7 +13,7 @@ async function start() {
 
   const io = new Server(server, {
     cors: {
-      origin: [env.clientUrl, 'http://localhost:5173', 'capacitor://localhost', 'http://localhost'],
+      origin: [...env.clientOrigins, 'http://localhost:5173', 'capacitor://localhost', 'http://localhost'],
       credentials: true,
     },
   });
