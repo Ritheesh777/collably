@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Reveal } from '../../lib/motion.jsx';
 import { IconCompany, IconUser } from '../../components/icons.jsx';
+import Seo from '../../components/Seo.jsx';
 
 const COMPANY = [
   ['Register', 'Create your company account and set up your brand profile.'],
@@ -21,6 +22,20 @@ const CREATOR = [
 export default function HowItWorks() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-14">
+      <Seo
+        title="How It Works — Brand & Creator Collaborations"
+        description="See how Collably works for brands and creators: post or browse campaigns, apply, chat privately, collaborate and review. Four simple steps to your next brand collaboration."
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: [
+            { '@type': 'Question', name: 'How do brands find creators on Collably?', acceptedAnswer: { '@type': 'Answer', text: 'Brands post a campaign with their requirements — platform, follower range, category and city. Matching creators browse and apply, and brands review real metrics before accepting.' } },
+            { '@type': 'Question', name: 'Is Collably free for creators?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Creators join free and get three free collaborations. After that a subscription keeps collaborations unlimited.' } },
+            { '@type': 'Question', name: 'Does Collably take a commission on brand deals?', acceptedAnswer: { '@type': 'Answer', text: 'No. Payments between a brand and a creator are arranged privately between them. Collably charges only a platform subscription and never takes a cut of your deal.' } },
+            { '@type': 'Question', name: 'When do contact details become visible?', acceptedAnswer: { '@type': 'Answer', text: 'Contact details stay private until both sides accept a collaboration. Chat and contact information unlock only after mutual acceptance.' } },
+          ],
+        }}
+      />
       <Reveal className="text-center">
         <h1 className="text-4xl font-bold text-ink-950">How Collably Works</h1>
         <p className="mt-3 text-ink-500">

@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { publicApi } from '../../api/endpoints.js';
 import { Field } from '../../components/ui.jsx';
 import { IconSearch, IconMessage, IconStar } from '../../components/icons.jsx';
+import Seo from '../../components/Seo.jsx';
 
 export default function About() {
   const [form, setForm] = useState({ name: '', email: '', message: '' });
@@ -24,6 +25,7 @@ export default function About() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-14">
+      <Seo title="About Collably" description="Collably is built for small and mid-sized businesses and micro & mid-tier creators — structured discovery, real metrics and honest collaboration without agency fees." />
       <div className="grid gap-10 md:grid-cols-2">
         <div>
           <h1 className="text-4xl font-bold text-slate-900">About Collably</h1>

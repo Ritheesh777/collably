@@ -4,6 +4,7 @@ import CampaignCard from '../../components/CampaignCard.jsx';
 import CampaignFilters from '../../components/CampaignFilters.jsx';
 import { Spinner, EmptyState, Pagination } from '../../components/ui.jsx';
 import { campaignApi } from '../../api/endpoints.js';
+import Seo from '../../components/Seo.jsx';
 
 export default function BrowsePublic() {
   const [filters, setFilters] = useState({ page: 1, sort: 'latest' });
@@ -22,6 +23,7 @@ export default function BrowsePublic() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
+      <Seo title="Browse Influencer Campaigns & Brand Collaborations" description="Browse live influencer marketing campaigns from brands across India. Filter by platform, category, follower range and city, then apply free as a content creator." keywords="influencer campaigns India, brand collaborations, paid creator campaigns, sponsored posts" />
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-slate-900">Browse Campaigns</h1>

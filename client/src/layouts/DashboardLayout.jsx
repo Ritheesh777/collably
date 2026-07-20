@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useSocket } from '../context/SocketContext.jsx';
 import { motion } from '../lib/motion.jsx';
 import PremiumBadge, { PremiumPill } from '../components/PremiumBadge.jsx';
+import Seo from '../components/Seo.jsx';
 import {
   IconDashboard, IconCampaign, IconPlusCircle, IconInbox, IconSearch, IconMessage,
   IconBell, IconStar, IconCompany, IconUser, IconSettings, IconLogout, IconUsers,
@@ -119,6 +120,9 @@ export default function DashboardLayout() {
 
   return (
     <div className="flex min-h-screen">
+      {/* Logged-in screens: keep them out of the index entirely. They are
+          useless as search results and would eat crawl budget. */}
+      <Seo noindex title="Dashboard" />
       {/* Desktop sidebar — sticky full-height so it never drifts with the page */}
       <aside className="glass sticky top-0 hidden h-screen w-64 shrink-0 flex-col overflow-y-auto border-r border-ink-200 lg:flex">
         <div className="flex h-16 shrink-0 items-center border-b border-ink-200 px-5">

@@ -1,0 +1,21 @@
+# Collably — https://www.thecollably.in
+User-agent: *
+Allow: /
+
+# Logged-in application screens: no value in search results, and crawling them
+# wastes the budget that public pages need.
+Disallow: /company/
+Disallow: /creator/
+Disallow: /admin/
+Disallow: /messages
+Disallow: /notifications
+Disallow: /settings
+Disallow: /subscribe
+Disallow: /support
+Disallow: /reviews
+Disallow: /saved
+Disallow: /verify-email
+Disallow: /reset-password
+Disallow: /forgot-password
+
+Sitemap: https://www.thecollably.in/sitemap.xml

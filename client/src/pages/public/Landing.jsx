@@ -5,6 +5,7 @@ import { campaignApi, publicApi } from '../../api/endpoints.js';
 import { compactNumber } from '../../utils/format.js';
 import { HERO_IMAGES } from '../../utils/images.js';
 import { FadeIn, Reveal, Stagger, StaggerItem, motion } from '../../lib/motion.jsx';
+import Seo, { SITE_URL, SITE_NAME } from '../../components/Seo.jsx';
 import {
   IconSparkles, IconSearch, IconMessage, IconHandshake, IconStar, IconShield,
   IconArrowRight, IconCheck, IconTrending, IconUser, IconCompany,
@@ -28,6 +29,38 @@ export default function Landing() {
 
   return (
     <div className="overflow-clip">
+      <Seo
+        title="Brand & Creator Collaboration Platform in India"
+        description="Collably connects brands with content creators and influencers across India. Post campaigns, discover verified creators, chat privately and collaborate — no agency fees, no middlemen."
+        keywords="influencer marketing platform India, brand collaboration platform, find content creators, micro influencer platform, creator marketplace India, influencer campaigns"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@graph': [
+            {
+              '@type': 'Organization',
+              '@id': `${SITE_URL}/#organization`,
+              name: SITE_NAME,
+              url: SITE_URL,
+              logo: `${SITE_URL}/icon-512.png`,
+              description:
+                'Collably connects brands with content creators and influencers for paid collaborations across India.',
+              areaServed: 'IN',
+            },
+            {
+              '@type': 'WebSite',
+              '@id': `${SITE_URL}/#website`,
+              url: SITE_URL,
+              name: SITE_NAME,
+              publisher: { '@id': `${SITE_URL}/#organization` },
+              potentialAction: {
+                '@type': 'SearchAction',
+                target: { '@type': 'EntryPoint', urlTemplate: `${SITE_URL}/campaigns?q={search_term_string}` },
+                'query-input': 'required name=search_term_string',
+              },
+            },
+          ],
+        }}
+      />
       {/* ── Hero ───────────────────────────────────────── */}
       <section className="relative border-b border-ink-200">
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-20 pt-14 sm:pt-16 lg:grid-cols-[1.05fr_0.95fr]">
